@@ -1,4 +1,5 @@
-﻿import { useState } from 'react';
+﻿import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -29,6 +30,37 @@ export default function HomeScreen() {
 
   const deleteTask = (id: string) => {
     setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  const loadTasks = async () => {
+    try {
+      const storedTasks = await AsyncStorage.getItem('tasks');
+
+      if (storedTasks !== null) {
+        setTasks(JSON.parse(storedTasks));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    saveTasks();
+  }, [tasks]);
+
+  const saveTasks = async () => {
+    try {
+      await AsyncStorage.setItem(
+        'tasks',
+        JSON.stringify(tasks)
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
