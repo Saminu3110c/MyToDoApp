@@ -11,7 +11,7 @@ import {
 export default function HomeScreen() {
   const [task, setTask] = useState('');
   const [tasks, setTasks] = useState<
-    { id: string; text: string }[]
+    { id: string; sn: number; text: string }[]
   >([]);
 
   const addTask = () => {
@@ -19,12 +19,17 @@ export default function HomeScreen() {
 
     const newTask = {
       id: Date.now().toString(),
+      sn: tasks.length + 1,
       text: task,
     };
 
     setTasks([...tasks, newTask]);
-
+    
     setTask('');
+  };
+
+  const deleteTask = (id: string) => {
+    setTasks(tasks.filter((task) => task.id !== id));
   };
 
   return (
@@ -45,8 +50,11 @@ export default function HomeScreen() {
         data={tasks}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Text style={styles.task}>
-            {item.text}
+          <Text
+            style={styles.task}
+            onPress={() => deleteTask(item.id)}
+          >
+            {item.sn}:        {item.text}
           </Text>
         )}
       />
