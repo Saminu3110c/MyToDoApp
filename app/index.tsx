@@ -1,9 +1,55 @@
-﻿import { View, Text, StyleSheet } from 'react-native';
+﻿import { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
 
 export default function HomeScreen() {
+  const [task, setTask] = useState('');
+  const [tasks, setTasks] = useState<
+    { id: string; text: string }[]
+  >([]);
+
+  const addTask = () => {
+    if (task.trim() === '') return;
+
+    const newTask = {
+      id: Date.now().toString(),
+      text: task,
+    };
+
+    setTasks([...tasks, newTask]);
+
+    setTask('');
+  };
+
   return (
     <View style={styles.container}>
-      <Text>My First Mobile App 🚀</Text>
+      <TextInput
+        placeholder="Enter a task"
+        style={styles.input}
+        value={task}
+        onChangeText={setTask}
+      />
+
+      <Button
+        title="Add Task"
+        onPress={addTask}
+      />
+
+      <FlatList
+        data={tasks}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Text style={styles.task}>
+            {item.text}
+          </Text>
+        )}
+      />
     </View>
   );
 }
@@ -11,7 +57,23 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 20,
+    paddingTop: 60,
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: '#999',
+    padding: 12,
+    marginBottom: 10,
+    borderRadius: 8,
+  },
+
+  task: {
+    backgroundColor: '#eee',
+    padding: 12,
+    marginTop: 10,
+    borderRadius: 8,
+    fontSize: 16,
   },
 });
